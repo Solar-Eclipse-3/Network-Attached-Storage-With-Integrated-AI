@@ -12,117 +12,168 @@ This project includes both a **Flask backend** (file storage, indexing, and File
 
 ---
 
-## 🖥️ 1. Backend Setup (Flask + FileWizardAI)
+## 🖥️ Backend Setup (Flask + FileWizardAI)
 
 ```bash
 python -m venv venv
 source venv/bin/activate   # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-
-#Start the backend server:
 python chatbot_server.py
+```
 
-#Backend runs on http://localhost:5000
+Backend runs on:
 
-# 🌐 2. Frontend Setup (React + FileWizardAI UI)
+```
+http://localhost:5000
+```
 
+---
 
+## 🌐 Frontend Setup (React + FileWizardAI UI)
 
-<!-- # Network Attached Storage with Integrated AI
+The frontend includes:
 
-A simple NAS built with Flask + React that now supports rich file uploads, smart search, and a chatbot that can locate or group your files on demand.
+- File upload dashboard  
+- File previews (images, videos, PDFs, text)  
+- Filters + instant search  
+- Chatbot UI for FileWizardAI  
+- Album viewer and file chips  
 
-## ⚠️ Deployment Requirements
+```bash
+npm install
+npm run dev
+```
 
-**This app requires a persistent server environment:**
-- ✅ **Persistent file storage** for uploads
-- ✅ **SQLite database** for file indexing
-- ✅ **Long-running server** (not serverless)
+Frontend runs on:
+
+```
+http://localhost:5173
+```
+
+---
+
+# 🧠 My Contributions: FileWizardAI + Backend + Frontend
+
+I was responsible for designing and implementing the **FileWizardAI system**, including both the backend logic and the frontend integration.
+
+## 🔧 Backend (Flask)
+
+- Built the FileWizardAI engine that interprets natural‑language commands  
+- Implemented search logic combining keyword matching + AI responses  
+- Created backend routes for:  
+  - `/chat` (AI assistant)  
+  - `/files` (upload, list, delete, metadata)  
+  - `/albums` (create + list albums)  
+- Integrated OpenAI responses with local file indexing  
+- Ensured the system works **with or without** an API key (fallback mode)
+
+## 🎨 Frontend (React)
+
+- Developed the chat interface for FileWizardAI  
+- Connected the UI to backend APIs for chat, file operations, and album creation  
+- Built dynamic components for:  
+  - File previews  
+  - File chips  
+  - Album displays  
+  - Chatbot message formatting  
+- Improved error handling and user feedback  
+- Ensured smooth request/response flow between UI → backend → UI  
+
+---
+
+# ⚠️ Deployment Requirements
+
+This app requires a persistent server environment:
+
+- ✅ Persistent file storage for uploads  
+- ✅ SQLite database for file indexing  
+- ✅ Long-running server (not serverless)
 
 **Compatible platforms:** Railway (with volumes), Render, VPS, self-hosted  
-**NOT compatible:** Vercel, AWS Lambda, Azure Functions, or other serverless platforms
+**NOT compatible:** Vercel, AWS Lambda, Azure Functions, or other serverless platforms  
 
-## Features
+---
 
-- Upload/download/list/delete files from a web dashboard or CLI
-- Accepts images, videos, PDFs, docs, and plain-text formats
-- File previews (images, videos, inline text + PDF iframe)
-- Dark/light UI theme, per-type filters, and instant search
-- Chatbot (FOCA 🦭) that can search your NAS or build picture albums using natural language
-- JSON API for files, albums, and chat—easy to integrate with other apps
+# ✨ Features
 
-## Setup
+- Upload/download/list/delete files from a web dashboard or CLI  
+- Accepts images, videos, PDFs, docs, and plain-text formats  
+- File previews (images, videos, inline text + PDF iframe)  
+- Dark/light UI theme, per-type filters, and instant search  
+- **FileWizardAI chatbot** that can:  
+  - Search your NAS using natural language  
+  - Build picture albums  
+  - Group files by type or content  
+- JSON API for files, albums, and chat  
+- CLI client for scripted operations  
 
-1. Create a virtual environment (recommended):
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # Windows: venv\Scripts\activate
-   ```
-2. Install backend dependencies:
-   ```bash
-   pip install -r requirments.txt   # note the existing filename spelling
-   ```
-3. (Optional) Copy `.env.example` to `.env` and set `OPENAI_API_KEY` if you want GPT answers.
-4. Start the Flask chatbot/file server:
-   ```bash
-   python chatbot_server.py
-   ```
-5. Install frontend deps and launch Vite:
-   ```bash
-   npm install
-   npm run dev
-   ```
-6. Open http://localhost:5173, sign up/log in, and start uploading files.
+---
 
-## Using the Web Dashboard & Chatbot
+# 🖥️ Using the Web Dashboard & Chatbot
 
-- Click **Upload File** to add pictures, videos, docs, or PDFs. Files are stored under `storage/uploads/` and indexed in `storage/file_index.json`.
-- Use the sidebar filters or search box to narrow the grid. Click a card for a preview or the download link.
-- Open the FOCA 🦭 chatbot to control everything with natural-language commands:
-  - `find the files that have the word report` – returns matching documents and download links.
-  - `make me an album of my graduation pics` – scans your pictures and creates a saved album.
-  - Any general NAS question. With an OpenAI key configured the model answers using the indexed snippets; without a key you still get local keyword search results.
-- The chatbot response shows the answer text, album info (if created), clickable file chips, and the underlying storage paths.
+- Upload files via the dashboard  
+- Files are stored under `storage/uploads/` and indexed in `storage/file_index.json`  
+- Use filters or search to narrow results  
+- Click a file card for preview or download  
+- Use FOCA 🦭 chatbot to:  
+  - Search files  
+  - Create albums  
+  - Ask general NAS questions  
 
-## HTTP API
+### Example Commands
+
+- `find the files that have the word report`  
+- `make me an album of my graduation pics`  
+
+With an OpenAI key, FileWizardAI uses GPT to generate richer answers.  
+Without a key, it falls back to local keyword search.
+
+---
+
+# 🔌 HTTP API
 
 The Flask server exposes several JSON endpoints (the React dev server proxies them under `/api`):
 
-| Method | Endpoint           | Description                                                    |
-| ------ | ------------------ | -------------------------------------------------------------- |
-| GET    | `/files`           | List all indexed files and metadata.                            |
-| POST   | `/files`           | Upload a file (`multipart/form-data` field named `file`).       |
-| DELETE | `/files/<id>`      | Delete a stored file and its metadata entry.                    |
-| GET    | `/files/<id>/raw`  | Stream/download the raw file contents.                          |
-| GET    | `/albums`          | List saved albums.                                              |
-| POST   | `/albums`          | Create an album (`name`, optional `query` or `file_ids`).       |
-| POST   | `/chat`            | Ask the NAS assistant a question or command (search/album/etc). |
+| Method | Endpoint | Description |  
+|--------|--------------------|-------------|  
+| GET | `/files` | List all indexed files and metadata |  
+| POST | `/files` | Upload a file (`multipart/form-data` field named `file`) |  
+| DELETE | `/files/<id>` | Delete a stored file and its metadata entry |  
+| GET | `/files/<id>/raw` | Stream/download the raw file contents |  
+| GET | `/albums` | List saved albums |  
+| POST | `/albums` | Create an album (`name`, optional `query` or `file_ids`) |  
+| POST | `/chat` | Ask the NAS assistant a question or command |  
 
-### CLI (optional)
+---
 
-`nas_client.py` still works for simple scripted operations:
+# 🧪 CLI Usage (Optional)
 
-```
+```bash
 python nas_client.py upload <file_path>
 python nas_client.py download <filename>
 python nas_client.py list
 python nas_client.py delete <filename>
 ```
 
-## Supported File Types
+---
 
-- Text/markdown/log (`.txt`, `.md`, `.log`, `.csv`, `.json`)
-- PDF (`.pdf`)
-- Documents (`.doc`, `.docx`)
-- Images (`.png`, `.jpg`, `.jpeg`, `.gif`, `.bmp`, `.webp`)
-- Videos (`.mp4`, `.mkv`, `.avi`, `.mov`, `.wmv`, `.flv`, `.webm`)
+# 📁 Supported File Types
 
-## Chatbot Tips
+- Text/markdown/log (`.txt`, `.md`, `.log`, `.csv`, `.json`)  
+- PDF (`.pdf`)  
+- Documents (`.doc`, `.docx`)  
+- Images (`.png`, `.jpg`, `.jpeg`, `.gif`, `.bmp`, `.webp`)  
+- Videos (`.mp4`, `.mkv`, `.avi`, `.mov`, `.wmv`, `.flv`, `.webm`)  
 
-- Configure `OPENAI_API_KEY` + `OPENAI_MODEL` in `.env` to let GPT draft richer answers grounded in your files.
-- Without a key the app falls back to local keyword search and still returns matching file links.
-- Album commands prioritise pictures; delete/re-upload images to refresh the album contents.
+---
 
-## Security Notes
+# 🔐 Security Notes
 
-This project is for demos/learning. For production use, also include authentication, HTTPS, encryption, access control, and backups/monitoring. -->
+This project is for demos/learning.  
+For production use, add:
+
+- Authentication  
+- HTTPS  
+- Access control  
+- Backups  
+- Monitoring  
