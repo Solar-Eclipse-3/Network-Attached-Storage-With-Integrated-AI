@@ -1,0 +1,34 @@
+name: mcdonalds-mcnuggets
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+  - pip:
+    # FastAPI backend dependencies
+    - fastapi
+    - uvicorn[standard]==0.22.0
+    - openai
+    - pydantic-settings
+    - llama-index
+    - git+https://github.com/openai/whisper.git
+    - pydub
+    - docx2txt
+    - nbconvert
+    - openpyxl
+    
+    # Flask backend dependencies
+    - flask==2.3.3
+    - werkzeug==2.3.7
+    - python-dotenv==1.0.0
+    - pathlib==1.0.1
+    - requests==2.31.0
+    
+    # Additional useful packages
+    - jupyter
+    - ipykernel
+    - pandas
+    - numpy
+    - matplotlib
+    - seaborn
+
